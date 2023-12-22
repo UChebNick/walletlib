@@ -1,22 +1,22 @@
 import requests as r
 
-
+#http://79.174.80.32:22354/wallet/create/?wallet_type=0.01
 def create_wallet(wallet_type: str) -> tuple:
-    #function for creating a wallet
+    # function for creating a wallet
     payloud = {"wallet_type": wallet_type}
-    callback = r.get("http://127.0.0.1:8080" + "/wallet/create/", params=payloud)
+    callback = r.get("http://79.174.80.32:22354" + "/wallet/create/", params=payloud)
     return {"pub": callback.json()["pub"], "priv": callback.json()["priv"]}
+
 
 class wallet:
     def __init__(self, pub: str, priv: str) -> None:
         self.pub = pub
         self.priv = priv
-        self.link = "http://127.0.0.1:8080"
+        self.link = "http://79.174.80.32:22354"
         self.wallet_type = "0.01"
 
-
     def check_amount(self) -> int:
-        #function for checking amount
+        # function for checking amount
 
         payload = {"pub": self.pub, "priv": self.priv}
         callback = r.get(self.link + "/wallet/amount/", params=payload)
@@ -30,10 +30,8 @@ class wallet:
         else:
             return error(callback.json()["error"])
 
-
-
     def send_amount(self, to: str, amount: int) -> None:
-        #function for making transfers
+        # function for making transfers
 
         payload = {"to_pub": to, "from_pub": self.pub, "from_priv": self.priv, "amount": amount}
         callback = r.get(self.link + "/amount/send/", params=payload)
@@ -47,9 +45,8 @@ class wallet:
         else:
             return error(callback.json()["error"])
 
-
     def check_transaction(self):
-        #function for check transaction
+        # function for check transaction
 
         payload = {"priv": self.priv}
         callback = r.get(self.link + "/wallet/transactions/", params=payload)
@@ -68,15 +65,10 @@ class wallet:
             return error(callback.json()["error"])
 
 
-
-
-
-
-#functions for calling errors
+# functions for calling errors
 def unknown_error():
     raise Exception("unknown error")
+
+
 def error(er):
     raise Exception(f"{er} error")
-
-
-

@@ -4,7 +4,7 @@ import requests as r
 def create_wallet(wallet_type: str) -> tuple:
     # function for creating a wallet
     payloud = {"wallet_type": wallet_type}
-    callback = r.get("http://79.174.80.32:22354" + "/wallet/create/", params=payloud)
+    callback = r.get("http://95.163.231.173:8080" + "/wallet/create/", params=payloud)
     return {"pub": callback.json()["pub"], "priv": callback.json()["priv"]}
 
 
@@ -12,7 +12,7 @@ class wallet:
     def __init__(self, pub: str, priv: str) -> None:
         self.pub = pub
         self.priv = priv
-        self.link = "http://79.174.80.32:22354"
+        self.link = "http://95.163.231.173:8080"
         self.wallet_type = "0.01"
 
     def check_amount(self) -> int:

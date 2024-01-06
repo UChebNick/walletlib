@@ -1,3 +1,20 @@
+import pip._internal as pip
+
+def import_lib(name):
+    try:
+        return __import__(name)
+    except ImportError:
+        pip.main(['install', name])
+    return __import__(name)
+
+
+requests = import_lib('requests')
+
+
+
+
+
+
 import requests as r
 from waletlib.error import *
 
@@ -6,7 +23,7 @@ from waletlib.error import *
 def create_wallet(wallet_type="0.01") -> tuple:
     # function for creating a wallet
     payloud = {"wallet_type": wallet_type}
-    callback = r.get("http://79.174.92.155:8080" + "/wallet/create/", params=payloud)
+    callback = r.get("http://127.0.0.1:8080" + "/wallet/create/", params=payloud)
     if callback.json()["code"] == 200:
         return {"pub": callback.json()["pub"], "priv": callback.json()["priv"]}
 
@@ -25,7 +42,7 @@ class wallet:
     def __init__(self, pub: str, priv: str) -> None:
         self.pub = pub
         self.priv = priv
-        self.link = "http://79.174.92.155:8080"
+        self.link = "http://127.0.0.1:8080"
         self.wallet_type = "0.01"
 
     def check_amount(self) -> int:

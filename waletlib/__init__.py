@@ -8,7 +8,8 @@ def import_lib(name):
     return __import__(name)
 
 
-requests = import_lib('requests')
+if __name__ == '__main__':
+    numpy = import_lib('requests')
 
 
 
@@ -16,7 +17,7 @@ requests = import_lib('requests')
 
 
 import requests as r
-from waletlib.error import *
+from error import *
 
 
 #http://79.174.80.32:22354/wallet/create/?wallet_type=0.01
@@ -94,7 +95,7 @@ class wallet:
     def check_transaction(self):
         # function for check transaction
 
-        payload = {"priv": self.priv}
+        payload = {"priv": self.priv, "pub": self.priv}
         callback = r.get(self.link + "/wallet/transactions/", params=payload)
 
         if callback.json()["code"] == 200:

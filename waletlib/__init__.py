@@ -13,19 +13,20 @@ if __name__ == '__main__':
 
 
 
-
-
+hp = "172.22.230.194:8080"
 
 import requests as r
-from error import *
+from walletlib.waletlib.error import *
 
 
 #http://79.174.80.32:22354/wallet/create/?wallet_type=0.01
 def create_wallet(wallet_type="0.01") -> tuple:
     # function for creating a wallet
     payloud = {"wallet_type": wallet_type}
-    callback = r.get("http://127.0.0.1:8080" + "/wallet/create/", params=payloud)
-    if callback.json()["code"] == 200:
+    callback = r.get("http://"+ hp + "/wallet/create/", params=payloud)
+    if callback.status_code == 429:
+        raise TooManyRequest(callback)
+    elif callback.json()["code"] == 200:
         return {"pub": callback.json()["pub"], "priv": callback.json()["priv"]}
 
     elif callback.json()["code"] == 520:
@@ -43,7 +44,7 @@ class wallet:
     def __init__(self, pub: str, priv: str) -> None:
         self.pub = pub
         self.priv = priv
-        self.link = "http://127.0.0.1:8080"
+        self.link = "http://"+ hp
         self.wallet_type = "0.01"
 
     def check_amount(self) -> int:
@@ -51,8 +52,9 @@ class wallet:
 
         payload = {"pub": self.pub, "priv": self.priv}
         callback = r.get(self.link + "/wallet/amount/", params=payload)
-
-        if callback.json()["code"] == 200:
+        if callback.status_code == 429:
+            raise TooManyRequest(callback)
+        elif callback.json()["code"] == 200:
             return callback.json()["amount"]
 
         elif callback.json()["code"] == 520:
@@ -71,14 +73,17 @@ class wallet:
 
         payload = {"to_pub": to, "from_pub": self.pub, "from_priv": self.priv, "amount": amount}
         callback = r.get(self.link + "/amount/send/", params=payload)
+        if callback.status_code == 429:
+            raise TooManyRequest(callback)
 
-        if callback.json()["code"] == 200:
+        elif callback.json()["code"] == 200:
             return payload
 
         elif callback.json()["code"] == 520:
             raise UnknownError()
 
         else:
+
             if callback.json()["error"] == "invalid to_pub wallet code":
                 raise InvalidPubCode(callback)
             elif callback.json()["error"] == "invalid amount":
@@ -97,8 +102,9 @@ class wallet:
 
         payload = {"priv": self.priv, "pub": self.priv}
         callback = r.get(self.link + "/wallet/transactions/", params=payload)
-
-        if callback.json()["code"] == 200:
+        if callback.status_code == 429:
+            raise TooManyRequest(callback)
+        elif callback.json()["code"] == 200:
             ret = []
             for i in callback.json()["transaction"]:
                 ret.append({"to_pub": i[0], "from_priv": i[1], "amount": i[2], "time": i[3][:-1]})

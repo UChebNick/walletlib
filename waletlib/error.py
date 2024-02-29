@@ -42,6 +42,11 @@ class UnknownError(Exception):
     def __str__(self):
         return "unknown error"
 
+class TooManyRequest(Exception):
+    def __init__(self, callback):
+        self.callback = callback
+    def __str__(self):
+        return f"too many requests\n{self.callback.json()['detail']}"
 
 
 

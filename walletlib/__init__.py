@@ -1,9 +1,24 @@
-import asyncio
 import aiohttp
-from walletlib.walletlib.error import *
+from walletlib.error import *
 
 
 hp = "127.0.0.1:8000"
+
+
+
+import pip._internal as pip
+
+def import_lib(name):
+    try:
+        return __import__(name)
+    except ImportError:
+        pip.main(['install', name])
+    return __import__(name)
+
+
+import_lib('aiohttp')
+
+
 
 
 async def create_wallet(wallet_type="0.01") -> tuple:

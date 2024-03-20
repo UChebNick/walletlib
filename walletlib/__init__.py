@@ -8,8 +8,7 @@ def import_lib(name):
     return __import__(name)
 
 
-if __name__ == '__main__':
-    numpy = import_lib('requests')
+import_lib('requests')
 
 
 
